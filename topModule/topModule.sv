@@ -10,7 +10,7 @@ module topModule(
 
     // output stream (results)
     output        out_valid,
-    output [127:0] out_data,
+    output  [31:0] out_data [3:0],
     input         out_ready
 );
 
@@ -20,7 +20,7 @@ module topModule(
     wire input_read_en, weight_read_en;
 
     wire [7:0] activation_data [0:3];
-    wire [7:0] weight_data [0:33];
+    wire [7:0] weight_data [0:3];
 
     wire done_compute;
 

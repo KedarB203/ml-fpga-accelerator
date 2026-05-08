@@ -54,7 +54,7 @@ generate
 endgenerate
 
 generate
-    for(i = 0; i < 4 ; ++i) begin
+    for(i = 0; i < 4 ; i=i+1) begin
         assign result_out[i] = acc_wire[i][4];
     end
 endgenerate

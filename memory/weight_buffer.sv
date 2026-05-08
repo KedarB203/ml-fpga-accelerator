@@ -13,7 +13,6 @@ module weight_buffer(
     reg [7:0] mem [0:15];   
     reg [3:0] wr_ptr;
     reg [3:0] rd_ptr;
-    reg [4:0] count;
 
     // WRITE (load activations)
     always @(posedge clk) begin
@@ -35,7 +34,7 @@ module weight_buffer(
             out_data[2] <= 0;
             out_data[3] <= 0;
         end
-        else if (read_en) begin
+        else if (read_en & rd_ptr <= 12) begin
             out_data[0] <= mem[rd_ptr];
             out_data[1] <= mem[rd_ptr + 1];
             out_data[2] <= mem[rd_ptr + 2];
