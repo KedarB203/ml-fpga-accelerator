@@ -13,7 +13,33 @@ module systolic_array(
 wire signed [7:0] a_wire [0:3][0:4];
 //wire signed [7:0] w_wire [0:4][0:3];
 wire signed [31:0] acc_wire [0:4][0:3];
+localparam TOTAL_CYCLES = 4;
+reg [$clog2(TOTAL_CYCLES+1)-1:0] cycle_count;
+reg computing;
 
+always_ff @(posedge clk or posedge rst) begin
+    if (rst) begin
+        cycle_count <= '0;
+        computing   <= 1'b0;
+        done        <= 1'b0;
+    end else if (start_compute && !computing) begin
+        computing   <= 1'b1;
+        cycle_count <= '0;
+        done        <= 1'b0;
+    end else if (computing) begin
+        if (cycle_count == TOTAL_CYCLES - 1) begin
+            computing <= 1'b0;
+            done      <= 1'b1;
+        end else begin
+            cycle_count <= cycle_count + 1;
+            done        <= 1'b0;
+        end
+    end else begin
+        done <= 1'b0;
+    end
+end
+
+    
 genvar i;
 generate
     for (i = 0; i < 4; i = i+1) begin
@@ -60,6 +86,5 @@ generate
     end
 endgenerate
 
-//assign done = (cycle_count == 7);
 
 endmodule
