@@ -12,13 +12,14 @@ module pe(
     output  reg signed [31:0] acc_out
 );
 
-reg [7:0] w_reg;
+
 wire [31:0] acc_res;
+reg signed [7:0] w_reg;
 mac u_mac (
     .clk(clk),
     .rst(rst),
     .a_in(a_in),
-    .b_in(b_in),
+    .b_in(w_reg),
     .acc_in(acc_in),
     .acc_out(acc_res)
 );
@@ -35,7 +36,7 @@ always @(posedge clk or posedge rst) begin
             w_reg <= b_in;
         
         end
-        b_out <= b_in;
+        b_out <= w_reg;
         a_out <= a_in;
         acc_out <= acc_res;
     end

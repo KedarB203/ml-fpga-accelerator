@@ -8,12 +8,16 @@ module mac (
     output reg signed [31:0] acc_out
 );
 
+reg signed [15:0] mult;
+reg signed [31:0] acc_reg;
 always @(posedge clk) begin
     if (rst) begin
         acc_out <= 0;
     end
     else begin
-        acc_out <= acc_in + a_in * b_in;
+        mult <= a_in * b_in;
+        acc_reg <= acc_in + mult;
+        acc_out <= acc_reg;
     end
 end
 

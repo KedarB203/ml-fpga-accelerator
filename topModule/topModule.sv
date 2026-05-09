@@ -10,7 +10,7 @@ module topModule(
 
     // output stream (results)
     output        out_valid,
-    output  [31:0] out_data [3:0],
+    output  [31:0] out_data [0:3],
     input         out_ready
 );
 
@@ -57,7 +57,7 @@ module topModule(
         .rst(rst),
 
         .w_load(load_weight),
-
+        .start_compute(start_compute),
         .a_in(activation_data),
         .b_in(weight_data),
 
