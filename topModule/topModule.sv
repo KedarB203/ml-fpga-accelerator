@@ -67,16 +67,15 @@ module topModule(
 
     // ---------------- OUTPUT INTERFACE ----------------
     // (simple pass-through version; replace with FIFO later)
-    reg out_valid_r;
+    output_buffer u_output (
+        .clk(clk),
+        .rst(rst),
+        .done(done_compute),
+        .data_in(out_data),
 
-    always @(posedge clk) begin
-        if (rst)
-            out_valid_r <= 0;
-        else
-            out_valid_r <= done_compute;
-    end
-
-    assign out_valid = out_valid_r;
+        .data_out(out_data), // direct passthrough for now
+        .valid(out_valid)
+    );
 
     // ---------------- FSM CONTROLLER ----------------
     fsm_controller u_ctrl (
