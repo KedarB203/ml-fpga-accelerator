@@ -7,7 +7,13 @@ module output_buffer (
     output logic         valid
 );
 
-localparam logic signed [31:0] bias [0:3] = '{32'd2, 32'd1, 32'd0, 32'd3}; //introduce bias by later later 
+logic signed [31:0] bias [0:3];
+initial begin
+    bias[0] = 32'd2;
+    bias[1] = 32'd1;
+    bias[2] = 32'd0;
+    bias[3] = 32'd3;
+end
 
 always @(posedge clk) begin
     if (rst) begin
