@@ -3,8 +3,8 @@ module systolic_array(
     input   rst,
     input   w_load,
     input  start_compute,
-    input   [7:0] a_in [0:3],
-    input   [7:0]  b_in [0:3],
+    input   signed [7:0] a_in [0:3],
+    input   signed [7:0]  b_in [0:3][0:3],
 
     output  [31:0] result_out [0:3],
     output         done
@@ -69,7 +69,7 @@ generate
                 .rst(rst),
                 .w_load(w_load),
                 .a_in(a_wire[r][c]),
-                .b_in(b_in[c]),
+                .b_in(b_in[r][c]),
                 .acc_in(acc_wire[r][c]),
 
                 .a_out(a_wire[r][c+1]),

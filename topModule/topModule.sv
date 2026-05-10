@@ -21,9 +21,12 @@ module topModule(
 
     wire [7:0] activation_data [0:3];
     wire [7:0] weight_data [0:3];
+    wire [7:0] weight_dataA [0:3];
+    wire [7:0] weight_dataB [0:3];
 
     wire done_compute;
-
+    wire bufSel; // buffer selector for double buffering
+    wire  [31:0] pre_bias_data [0:3];
     // ---------------- INPUT BUFFER ----------------
     input_buffer u_input (
         .clk(clk),
@@ -43,14 +46,33 @@ module topModule(
         .clk(clk),
         .rst(rst),
 
-        .load(load_weight),
+        .load(bufSel & load_weight),
         .read_en(weight_read_en),
 
-        .in_data(weight_in),   // assume same stream 
+        .in_data(weight_in),   
 
-        .out_data(weight_data)
+        .out_data(weight_dataA)
     );
 
+
+    weight_buffer u_weight2 (
+        .clk(clk),
+        .rst(rst),
+
+        .load(~bufSel & load_weight),
+        .read_en(weight_read_en),
+
+        .in_data(weight_in),   
+
+        .out_data(weight_dataB)
+    );
+
+    genvar i;
+
+    for (i = 0; i < 4; i=i+1) begin
+        assign weight_data[i] = bufSel ? weight_dataA[i] : weight_dataB[i];
+    end
+    
     // ---------------- SYSTOLIC ARRAY ----------------
     systolic_array u_array (
         .clk(clk),
@@ -61,19 +83,20 @@ module topModule(
         .a_in(activation_data),
         .b_in(weight_data),
 
-        .result_out(out_data),
+        .result_out(pre_bias_data),
         .done(done_compute)
     );
 
+
     // ---------------- OUTPUT INTERFACE ----------------
-    // (simple pass-through version; replace with FIFO later)
+    
     output_buffer u_output (
         .clk(clk),
         .rst(rst),
         .done(done_compute),
-        .data_in(out_data),
+        .data_in(pre_bias_data),
 
-        .data_out(out_data), // direct passthrough for now
+        .data_out(out_data), 
         .valid(out_valid)
     );
 
@@ -90,7 +113,8 @@ module topModule(
         .start_compute(start_compute),
 
         .input_read_en(input_read_en),
-        .weight_read_en(weight_read_en)
+        .weight_read_en(weight_read_en),
+        .bufSel(bufSel)
     );
 
 endmodule

@@ -16,8 +16,7 @@ always @(posedge clk) begin
     end
     else begin
         mult <= a_in * b_in;
-        acc_reg <= acc_in + mult;
-        acc_out <= acc_reg;
+        acc_out <= acc_reg + mult;
     end
 end
 
