@@ -261,117 +261,114 @@ module tb_topModule;
         send_inputs;
         wait_and_check(32'd24, 32'd32, 32'd40, 32'd48, "T1-L2");
 
-        // // ============================================================
-        // // TEST 2 — input [2,2,2,2]
-        // //   L0: [24, 32, 40, 48]
-        // //   L1: [24, 32, 40, 48]
-        // //   L2: [48, 64, 80, 96]
-        // // ============================================================
-        // $display("=== TEST 2: input all-twos ===");
-        // do_reset;
-        // test_inputs[0]=8'd2; test_inputs[1]=8'd2;
-        // test_inputs[2]=8'd2; test_inputs[3]=8'd2;
+        // ============================================================
+        // TEST 2 — input [2,2,2,2]
+        //   L0: [24, 32, 40, 48]
+        //   L1: [24, 32, 40, 48]
+        //   L2: [48, 64, 80, 96]
+        // ============================================================
+        $display("=== TEST 2: input all-twos ===");
+        do_reset;
+        test_inputs[0]=8'd2; test_inputs[1]=8'd2;
+        test_inputs[2]=8'd2; test_inputs[3]=8'd2;
 
-        // load_layer(0); send_weights(0);
-        // send_inputs;
-        // wait(u_top.u_ctrl.state == COMPUTE);
-        // @(posedge CLK); #1;
-        // load_layer(1); send_weights(1);
-        // wait_and_check(32'd24, 32'd32, 32'd40, 32'd48, "T2-L0");
+        load_layer(0); send_weights(0);
+        send_inputs;
+        wait(u_top.u_ctrl.state == COMPUTE);
+        @(posedge CLK); #1;
+        load_layer(1); send_weights(1);
+        wait_and_check(32'd24, 32'd32, 32'd40, 32'd48, "T2-L0");
 
-        // send_inputs;
-        // wait(u_top.u_ctrl.state == COMPUTE);
-        // @(posedge CLK); #1;
-        // load_layer(2); send_weights(2);
-        // wait_and_check(32'd24, 32'd32, 32'd40, 32'd48, "T2-L1");
+        send_inputs;
+        wait(u_top.u_ctrl.state == COMPUTE);
+        @(posedge CLK); #1;
+        load_layer(2); send_weights(2);
+        wait_and_check(32'd24, 32'd32, 32'd40, 32'd48, "T2-L1");
 
-        // send_inputs;
-        // wait_and_check(32'd48, 32'd64, 32'd80, 32'd96, "T2-L2");
-
-        // // ============================================================
-        // // TEST 3 — input [0,0,0,0]  (boundary: all zeros)
-        // //   All layers: [0, 0, 0, 0]
-        // // ============================================================
-        // $display("=== TEST 3: input all-zeros ===");
-        // do_reset;
-        // test_inputs[0]=8'd0; test_inputs[1]=8'd0;
-        // test_inputs[2]=8'd0; test_inputs[3]=8'd0;
-
-        // load_layer(0); send_weights(0);
-        // send_inputs;
-        // wait(u_top.u_ctrl.state == COMPUTE);
-        // @(posedge CLK); #1;
-        // load_layer(1); send_weights(1);
-        // wait_and_check(32'd0, 32'd0, 32'd0, 32'd0, "T3-L0");
-
-        // send_inputs;
-        // wait(u_top.u_ctrl.state == COMPUTE);
-        // @(posedge CLK); #1;
-        // load_layer(2); send_weights(2);
-        // wait_and_check(32'd0, 32'd0, 32'd0, 32'd0, "T3-L1");
-
-        // send_inputs;
-        // wait_and_check(32'd0, 32'd0, 32'd0, 32'd0, "T3-L2");
-
-        // // ============================================================
-        // // TEST 4 — input [1,2,3,4]
-        // //   L0: W0ᵀ×[1,2,3,4] = [34, 44, 54, 64]
-        // //   L1: [34, 44, 54, 64]
-        // //   L2: [68, 88, 108, 128]
-        // // ============================================================
-        // $display("=== TEST 4: input [1,2,3,4] ===");
-        // do_reset;
-        // test_inputs[0]=8'd1; test_inputs[1]=8'd2;
-        // test_inputs[2]=8'd3; test_inputs[3]=8'd4;
-
-        // load_layer(0); send_weights(0);
-        // send_inputs;
-        // wait(u_top.u_ctrl.state == COMPUTE);
-        // @(posedge CLK); #1;
-        // load_layer(1); send_weights(1);
-        // wait_and_check(32'd34, 32'd44, 32'd54, 32'd64, "T4-L0");
-
-        // send_inputs;
-        // wait(u_top.u_ctrl.state == COMPUTE);
-        // @(posedge CLK); #1;
-        // load_layer(2); send_weights(2);
-        // wait_and_check(32'd34, 32'd44, 32'd54, 32'd64, "T4-L1");
-
-        // send_inputs;
-        // wait_and_check(32'd68, 32'd88, 32'd108, 32'd128, "T4-L2");
-
-        // // ============================================================
-        // // TEST 5 — reset recovery mid-stream
-        // // ============================================================
-        // $display("=== TEST 5: reset recovery ===");
-        // @(posedge CLK); #1;
-        // activation_valid = 1'b1;
-        // activation_in    = 8'd99;
-        // repeat(2) @(posedge CLK);
-        // do_reset;
-
-        // test_inputs[0]=8'd1; test_inputs[1]=8'd1;
-        // test_inputs[2]=8'd1; test_inputs[3]=8'd1;
-
-        // load_layer(0); send_weights(0);
-        // send_inputs;
-        // wait(u_top.u_ctrl.state == COMPUTE);
-        // @(posedge CLK); #1;
-        // load_layer(1); send_weights(1);
-        // wait_and_check(32'd12, 32'd16, 32'd20, 32'd24, "T5-L0");
-
-        // send_inputs;
-        // wait(u_top.u_ctrl.state == COMPUTE);
-        // @(posedge CLK); #1;
-        // load_layer(2); send_weights(2);
-        // wait_and_check(32'd12, 32'd16, 32'd20, 32'd24, "T5-L1");
-
-        // send_inputs;
-        // wait_and_check(32'd24, 32'd32, 32'd40, 32'd48, "T5-L2");
+        send_inputs;
+        wait_and_check(32'd48, 32'd64, 32'd80, 32'd96, "T2-L2");
 
         // ============================================================
-        // Summary
+        // TEST 3 — input [0,0,0,0]  (boundary: all zeros)
+        //   All layers: [0, 0, 0, 0]
         // ============================================================
+        $display("=== TEST 3: input all-zeros ===");
+        do_reset;
+        test_inputs[0]=8'd0; test_inputs[1]=8'd0;
+        test_inputs[2]=8'd0; test_inputs[3]=8'd0;
+
+        load_layer(0); send_weights(0);
+        send_inputs;
+        wait(u_top.u_ctrl.state == COMPUTE);
+        @(posedge CLK); #1;
+        load_layer(1); send_weights(1);
+        wait_and_check(32'd0, 32'd0, 32'd0, 32'd0, "T3-L0");
+
+        send_inputs;
+        wait(u_top.u_ctrl.state == COMPUTE);
+        @(posedge CLK); #1;
+        load_layer(2); send_weights(2);
+        wait_and_check(32'd0, 32'd0, 32'd0, 32'd0, "T3-L1");
+
+        send_inputs;
+        wait_and_check(32'd0, 32'd0, 32'd0, 32'd0, "T3-L2");
+
+        // ============================================================
+        // TEST 4 — input [1,2,3,4]
+        //   L0: W0ᵀ×[1,2,3,4] = [34, 44, 54, 64]
+        //   L1: [34, 44, 54, 64]
+        //   L2: [68, 88, 108, 128]
+        // ============================================================
+        $display("=== TEST 4: input [1,2,3,4] ===");
+        do_reset;
+        test_inputs[0]=8'd1; test_inputs[1]=8'd2;
+        test_inputs[2]=8'd3; test_inputs[3]=8'd4;
+
+        load_layer(0); send_weights(0);
+        send_inputs;
+        wait(u_top.u_ctrl.state == COMPUTE);
+        @(posedge CLK); #1;
+        load_layer(1); send_weights(1);
+        wait_and_check(32'd34, 32'd44, 32'd54, 32'd64, "T4-L0");
+
+        send_inputs;
+        wait(u_top.u_ctrl.state == COMPUTE);
+        @(posedge CLK); #1;
+        load_layer(2); send_weights(2);
+        wait_and_check(32'd34, 32'd44, 32'd54, 32'd64, "T4-L1");
+
+        send_inputs;
+        wait_and_check(32'd68, 32'd88, 32'd108, 32'd128, "T4-L2");
+
+        // ============================================================
+        // TEST 5 — reset recovery mid-stream
+        // ============================================================
+        $display("=== TEST 5: reset recovery ===");
+        @(posedge CLK); #1;
+        activation_valid = 1'b1;
+        activation_in    = 8'd99;
+        repeat(2) @(posedge CLK);
+        do_reset;
+
+        test_inputs[0]=8'd1; test_inputs[1]=8'd1;
+        test_inputs[2]=8'd1; test_inputs[3]=8'd1;
+
+        load_layer(0); send_weights(0);
+        send_inputs;
+        wait(u_top.u_ctrl.state == COMPUTE);
+        @(posedge CLK); #1;
+        load_layer(1); send_weights(1);
+        wait_and_check(32'd12, 32'd16, 32'd20, 32'd24, "T5-L0");
+
+        send_inputs;
+        wait(u_top.u_ctrl.state == COMPUTE);
+        @(posedge CLK); #1;
+        load_layer(2); send_weights(2);
+        wait_and_check(32'd12, 32'd16, 32'd20, 32'd24, "T5-L1");
+
+        send_inputs;
+        wait_and_check(32'd24, 32'd32, 32'd40, 32'd48, "T5-L2");
+
         $display("");
         $display("=== RESULTS: %0d passed, %0d failed ===", pass_count, fail_count);
         if (fail_count == 0)
