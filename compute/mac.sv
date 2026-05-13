@@ -10,13 +10,12 @@ module mac (
 
 reg signed [15:0] mult;
 reg signed [31:0] acc_reg;
-always @(posedge clk) begin
+always @* begin
     if (rst) begin
-        acc_out <= 0;
+        acc_out <= 32'sd0;
     end
     else begin
-        mult <= a_in * b_in;
-        acc_out <= acc_reg + mult;
+        acc_out = acc_in + (a_in * b_in);
     end
 end
 

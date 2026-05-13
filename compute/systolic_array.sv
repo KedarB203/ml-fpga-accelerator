@@ -6,14 +6,14 @@ module systolic_array(
     input   signed [7:0] a_in [0:3],
     input   signed [7:0]  b_in [0:3][0:3],
 
-    output  [31:0] result_out [0:3],
-    output         done
+    output  signed [31:0] result_out [0:3],
+    output   reg     done
 );
 
 wire signed [7:0] a_wire [0:3][0:4];
 //wire signed [7:0] w_wire [0:4][0:3];
 wire signed [31:0] acc_wire [0:4][0:3];
-localparam TOTAL_CYCLES = 4;
+localparam TOTAL_CYCLES = 7;
 reg [$clog2(TOTAL_CYCLES+1)-1:0] cycle_count;
 reg computing;
 

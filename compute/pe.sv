@@ -19,7 +19,7 @@ mac u_mac (
     .clk(clk),
     .rst(rst),
     .a_in(a_in),
-    .b_in(w_reg),
+    .b_in(b_in),
     .acc_in(acc_in),
     .acc_out(acc_res)
 );
@@ -32,10 +32,10 @@ always @(posedge clk or posedge rst) begin
         acc_out <= 0;
     end
     else begin 
-        if (w_load) begin
-            w_reg <= b_in;
+        // if (w_load) begin
+        //     w_reg <= b_in;
         
-        end
+        // end
         b_out <= w_reg;
         a_out <= a_in;
         acc_out <= acc_res;

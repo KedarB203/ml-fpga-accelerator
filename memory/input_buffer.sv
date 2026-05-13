@@ -8,44 +8,51 @@ module input_buffer(
     input  [7:0] in_data,
     input        in_valid,
     output reg   in_ready,
-    output reg [7:0] out_data [0:3]
+    output reg signed [7:0] out_data [0:3],
+    output reg input_load_done
 );
 
-    reg [7:0] mem [0:15];   
-    reg [3:0] wr_ptr;
-    reg [3:0] rd_ptr;
-    reg [4:0] count;
+    reg [7:0] mem [0:3];   
+    reg [2:0] wr_ptr;
+    reg full;
 
     always @(posedge clk) begin
         if (rst) begin
             wr_ptr <= 0;
-            rd_ptr <= 0;
-            count  <= 0;
+            input_load_done <= 0;
+            full <= 0;
         end else begin
-
-            // WRITE — only when upstream data is valid
-            if (load && in_valid && (count < 16)) begin
-                mem[wr_ptr] <= in_data;
-                wr_ptr      <= wr_ptr + 1;
-                count       <= count + 1;
+            input_load_done <= 1'b0; 
+            if (load && in_valid && !full) begin
+                mem[wr_ptr]     <= in_data;
+                if (wr_ptr == 3'b011) begin
+                    wr_ptr          <= 3'b0;
+                    input_load_done <= 1'b1;  // fires AFTER mem[3] written
+                    full            <= 1'b1;
+                end else begin
+                    wr_ptr <= wr_ptr + 3'b001;
+                end
             end
-
-            // READ — output 4 entries per cycle to systolic array
-            if (read_en && (count >= 4)) begin
-                out_data[0] <= mem[rd_ptr    ];
-                out_data[1] <= mem[rd_ptr + 1];
-                out_data[2] <= mem[rd_ptr + 2];
-                out_data[3] <= mem[rd_ptr + 3];
-                rd_ptr      <= rd_ptr + 4;
-                count       <= count - 4;
-            end
-
         end
     end
 
-    // READY SIGNAL
-    always @(*) begin
-        in_ready = (count < 8);
+    always @(posedge clk) begin
+        if (rst) begin
+            for (int i = 0; i < 4; i++) begin
+                out_data[i] <= 0;
+            end
+        end else if (read_en && full) begin
+            out_data[0] <= mem[0];
+            out_data[1] <= mem[1];
+            out_data[2] <= mem[2];
+            out_data[3] <= mem[3];
+            full            <= 0;
+            wr_ptr          <= 0;
+            input_load_done <= 0;
+        end
     end
+
+// READY SIGNAL
+assign in_ready = !full;
 
 endmodule
