@@ -71,7 +71,7 @@ module fsm_controller(
                 input_read_en  = 1'b1;
                 weight_read_en = 1'b1;
                 if (counter < NUM_LAYERS - 1)
-                    load_weight = 1'b1;   // ← this line is missing
+                    load_weight = 1'b1; // start loading next layer's weights while computing current layer
                 if (done)
                     next_state     = WAIT_DONE;
             end

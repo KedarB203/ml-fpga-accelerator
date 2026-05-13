@@ -62,16 +62,17 @@ module topModule(
             feedback_data[2] <= out_data[2][7:0];
             feedback_data[3] <= out_data[3][7:0];
             use_feedback     <= 1'b1;
-            feedback_valid   <= 1'b0;
+            feedback_valid   <= 1'b0; //streaming too early can cause valid to pulse before data is latched in input buffer
             fb_active        <= 1'b0;
             fb_idx           <= 2'b00;
-
+        end
         // Advance index each cycle while streaming
-        end else if (use_feedback && !fb_active && load_input) begin
+        if (use_feedback && !fb_active && load_input) begin
             feedback_valid   <= 1'b1;
             fb_active        <= 1'b1;
             fb_idx           <= 2'b00;
-        end else if (fb_active) begin
+        end
+       if (fb_active) begin
             fb_idx <= fb_idx + 2'b01;
             if (fb_idx == 2'b11) begin
                 fb_active      <= 1'b0;
